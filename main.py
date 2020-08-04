@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 import math
 import random
 
@@ -12,6 +13,11 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("space_invaders.png")
 pygame.display.set_icon(icon)
 
+# background
+background = pygame.image.load("background.png")
+mixer.music.load("background.wav")
+mixer.music.play(-1)
+
 # player character
 player_image = pygame.image.load("player.png")
 player_x = 368
@@ -24,13 +30,13 @@ enemy_x = []
 enemy_y = []
 enemy_x_change = []
 enemy_y_change = []
-number_of_enemies = 6
+number_of_enemies = 7
 
 for i in range(number_of_enemies):
     enemy_image.append(pygame.image.load("enemy.png"))
     enemy_x.append(random.randint(0, 735))
     enemy_y.append(random.randint(30, 175))
-    enemy_x_change.append(7)
+    enemy_x_change.append(8)
     enemy_y_change.append(40)
 
 # enemy pew pew
@@ -47,15 +53,18 @@ font = pygame.font.Font("freesansbold.ttf", 30)
 text_x = 12
 text_y = 12
 
-
-
-# background
-background = pygame.image.load("background.png")
+# game over
+over_font = pygame.font.Font("freesansbold.ttf", 64)
 
 
 def display_score(x, y):
     score = font.render("Score: " + str(score_value), True, (255, 255, 255))
     screen.blit(score, (x, y))
+
+
+def game_over():
+    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+    screen.blit(over_text, (200, 250))
 
 
 def player(x, y):
@@ -93,6 +102,8 @@ while running:
                 player_x_change = 6.7
             if event.key == pygame.K_SPACE:
                 if laser_state == "charged":
+                    laser_sound = mixer.Sound("laser.wav")
+                    laser_sound.play()
                     laser_x = player_x
                     shoot(laser_x, laser_y)
         if event.type == pygame.KEYUP:
@@ -112,6 +123,14 @@ while running:
 
     # enemy movement
     for i in range(number_of_enemies):
+
+        # Game over
+        if enemy_y[i] > 430:
+            for j in range(number_of_enemies):
+                enemy_y[j] = 850
+            game_over()
+            break
+
         enemy_x[i] += enemy_x_change[i]
         if enemy_x[i] <= 0:
             enemy_x_change[i] = 7
@@ -123,6 +142,8 @@ while running:
         # collision
         collided = collision(enemy_x[i], enemy_y[i], laser_x, laser_y)
         if collided:
+            collision_sound = mixer.Sound("explosion.wav")
+            collision_sound.play()
             laser_y = 480
             laser_state = "charged"
             score_value += 1
