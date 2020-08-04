@@ -1,0 +1,5 @@
+import pygame
+
+pygame.init()
+
+
