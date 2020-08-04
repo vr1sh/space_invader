@@ -20,9 +20,8 @@ player_x_change = 0
 # enemy character
 enemy_image = pygame.image.load("enemy.png")
 enemy_x = random.randint(0, 800)
-enemy_y = random.randint(30, 200)
-enemy_x_change = 6.5
-enemy_y_change = 20
+enemy_y = random.randint(30, 175)
+enemy_x_change = 6.75
 
 # background
 background = pygame.image.load("background.png")
@@ -44,9 +43,9 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player_x_change = -6
+                player_x_change = -6.25
             if event.key == pygame.K_RIGHT:
-                player_x_change = 6
+                player_x_change = 6.25
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player_x_change = 0
@@ -54,19 +53,11 @@ while running:
     screen.fill((0, 0, 0))
     screen.blit(background, (0, 0))
 
+    player_x += player_x_change
     if player_x <= 0:
         player_x = 0
     elif player_x >= 736:
         player_x = 736
-    player_x += player_x_change
-
-    if enemy_x <= 0:
-        enemy_x_change = 6.5
-        enemy_y += enemy_y_change
-    elif enemy_x >= 736:
-        enemy_x_change = 6.5
-        enemy_y += enemy_y_change
-    enemy_x += enemy_x_change
 
     player(player_x, player_y)
     enemy(enemy_x, enemy_y)
